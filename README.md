@@ -40,7 +40,7 @@ We conducted a controlled **8-Experiment Ablation Study** comparing preprocessin
 * **Patients:** 233 unique individuals
 * **Classes:** Glioma, Meningioma, Pituitary
 
-### ✔ Patient-Level Split (Leakage-Free)
+###  Patient-Level Split (Leakage-Free)
 
 | Set        | Patients | Percentage |
 | ---------- | -------- | ---------- |
@@ -48,7 +48,7 @@ We conducted a controlled **8-Experiment Ablation Study** comparing preprocessin
 | Validation | 35       | 15%        |
 | Test       | 35       | 15%        |
 
-➡ **Zero overlap** of patients between sets.
+ **Zero overlap** of patients between sets.
 
 ---
 
@@ -76,7 +76,7 @@ We tested **3 preprocessing methods** + baseline:
 
 ---
 
-# 📊 Results Summary
+#  Results Summary
 
 |  Exp  | Strategy            | Augmentation |  Accuracy  |    AUC    | Outcome                    |
 | :---: | ------------------- | :----------: | :--------: | :-------: | -------------------------  |
