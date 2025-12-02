@@ -32,13 +32,16 @@ We conducted a controlled **8-Experiment Ablation Study** comparing preprocessin
 
 #  Methodology
 
-## 1️ Dataset & Splitting
+### 1. Dataset & Splitting
+* **Source:** Figshare Brain Tumor Dataset (Cheng et al.).
+* **Data Size:** 3,064 T1-weighted MRI images from 233 patients.
+* **Leakage Prevention:** We implemented a custom splitting algorithm that groups images by **Patient ID**.
+    * **Training:** 70% (163 Patients)
+    * **Validation:** 15% (35 Patients)
+    * **Testing:** 15% (35 Patients)
+    * *Result:* Zero overlap of patients between sets.
+* **Data Verification:** We performed a perceptual hash check (`imagehash`) on the entire dataset. While 26 visually identical images were found, our analysis confirmed that **all duplicates resided within the same split partition** (e.g., a training image duplicate was only found in training). This confirms that **no data leakage occurred** between train/test sets.
 
-* **Dataset:** Figshare Brain Tumor MRI Dataset (Cheng et al.)
-* **Dataset Link:** [https://figshare.com/articles/dataset/brain_tumor_dataset/1512427](https://figshare.com/articles/dataset/brain_tumor_dataset/1512427)
-* **Total Data:** 3,064 T1-weighted MRI images
-* **Patients:** 233 unique individuals
-* **Classes:** Glioma, Meningioma, Pituitary
 
 ###  Patient-Level Split (Leakage-Free)
 
