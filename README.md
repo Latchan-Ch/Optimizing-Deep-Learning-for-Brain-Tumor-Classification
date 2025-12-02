@@ -151,3 +151,11 @@ Special thanks to:
 * Supervision
 * Review & Editing
 * Conceptual oversight
+
+##  Full Jupyter Notebook (Link)
+If GitHub cannot render the full notebook due to its size.  
+The complete ablation study notebook (with all outputs, visualizations, and experiment logs) is available on Google Colab:
+
+**Open Notebook on Google Colab**  
+https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing
+
