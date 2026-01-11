@@ -1,4 +1,4 @@
-#  Optimizing Deep Learning for Brain Tumor Classification
+# Optimizing Deep Learning for Brain Tumor Classification
 
 ### **A Comparative Ablation Study of Preprocessing & Augmentation Strategies using VGG16**
 
@@ -10,40 +10,51 @@
 
 ##  Project Overview
 
-This project explores how preprocessing and augmentation strategies impact the performance of deep learning models for **brain tumor classification** (Glioma, Meningioma, Pituitary).
-Most prior works incorrectly use **slice-wise splitting**, causing **data leakage** and artificially high accuracy.
-We fix this by enforcing a strict **Patient-Level Split**, ensuring real clinical generalization.
+This project investigates how **image preprocessing and data augmentation strategies** affect the performance of deep learning models for **brain tumor classification** (Glioma, Meningioma, Pituitary).
 
-We conducted a controlled **8-Experiment Ablation Study** comparing preprocessing techniques with and without augmentation using a fixed **VGG16** architecture.
+Most prior works rely on **slice-wise random splitting**, which introduces **patient-level data leakage** and leads to inflated performance estimates.
+We address this issue by enforcing a strict **Patient-Level Split**, ensuring realistic clinical generalization.
+
+A controlled **8-experiment ablation study** was conducted using a fixed **VGG16** architecture to isolate the effects of preprocessing and augmentation.
 
 ---
 
 ##  Key Findings
 
-1. **Preprocessing alone is not enough** — accuracy stalls at ~88%.
-2. **Destructive preprocessing harms performance** — Skull-stripping & CLAHE + Augmentation caused underfitting (~82%).
-3. **Best Strategy** → **Bilateral Denoising + Augmentation**
+1. **Preprocessing alone is insufficient** — accuracy saturates at ~88%.
+2. **Aggressive (“destructive”) preprocessing harms performance** — Skull-stripping and CLAHE combined with augmentation lead to underfitting (~82% accuracy).
+3. **Denoising combined with augmentation yields the highest overall accuracy**, but with important statistical nuance:
 
-   *  **94.00% Accuracy**
-   *  **0.991 AUC**
-   * Proves that *cleaning the image before augmentation* yields optimal results.
+   * **94.00% Accuracy**
+   * **0.991 AUC**
+   * However, **McNemar’s test indicates that the improvement over augmentation alone is not statistically significant**, suggesting a global accuracy gain rather than a consistent per-sample advantage.
+
+> **Key takeaway:** Data augmentation is the dominant factor for generalization, while denoising provides a modest average improvement but does not uniformly outperform augmentation alone on all test samples.
 
 ---
 
-#  Methodology
+##  Methodology
 
 ### 1. Dataset & Splitting
-* **Source:** Figshare Brain Tumor Dataset (Cheng et al.).
-* **Data Size:** 3,064 T1-weighted MRI images from 233 patients.
-* **Leakage Prevention:** We implemented a custom splitting algorithm that groups images by **Patient ID**.
-    * **Training:** 70% (163 Patients)
-    * **Validation:** 15% (35 Patients)
-    * **Testing:** 15% (35 Patients)
-    * *Result:* Zero overlap of patients between sets.
-* **Data Verification:** We performed a perceptual hash check (`imagehash`) on the entire dataset. While 26 visually identical images were found, our analysis confirmed that **all duplicates resided within the same split partition** (e.g., a training image duplicate was only found in training). This confirms that **no data leakage occurred** between train/test sets.
 
+* **Source:** Figshare Brain Tumor Dataset (Cheng et al.)
+* **Data Size:** 3,064 T1-weighted contrast-enhanced MRI images from 233 patients
+* **Tumor Classes:** Glioma, Meningioma, Pituitary
+* **Leakage Prevention:** Custom **patient-level splitting algorithm**
 
-###  Patient-Level Split (Leakage-Free)
+  * **Training:** 70% (163 patients)
+  * **Validation:** 15% (35 patients)
+  * **Testing:** 15% (35 patients)
+* **Result:** **Zero patient overlap** across splits
+
+#### Duplicate Verification
+
+A perceptual hash (`imagehash`) check identified 26 visually identical images.
+All duplicates were confined **within the same split partition**, confirming **no cross-split leakage**.
+
+---
+
+###  Patient-Level Split Summary
 
 | Set        | Patients | Percentage |
 | ---------- | -------- | ---------- |
@@ -51,56 +62,65 @@ We conducted a controlled **8-Experiment Ablation Study** comparing preprocessin
 | Validation | 35       | 15%        |
 | Test       | 35       | 15%        |
 
- **Zero overlap** of patients between sets.
+ Zero patient overlap.
 
 ---
 
-## 2️ Model Architecture (VGG16)
+##  Model Architecture (VGG16)
 
-* Pretrained **VGG16** (ImageNet) with frozen base
+* Pretrained **VGG16** (ImageNet), frozen convolutional base
 * Custom classification head:
 
   * Flatten → Dense(512) → Dropout(0.6)
   * Dense(256) → Dropout(0.5)
-  * Softmax(3)
-* Regularization: EarlyStopping, Dropout
-* Same architecture used across all experiments for fairness
+  * Softmax (3 classes)
+* Regularization: Dropout + EarlyStopping
+* Identical architecture and hyperparameters across all experiments
 
 ---
 
-## 3️ Experimental Setup
+##  Experimental Setup
 
-We tested **3 preprocessing methods** + baseline:
+**Preprocessing strategies tested:**
 
-* **Skull-Stripping** (Otsu thresholding + morphology)
-* **CLAHE** (Histogram equalization)
-* **Bilateral Filtering** (Edge-preserving denoising)
-* Compared each *with* and *without* augmentation.
+* Skull-Stripping (Otsu thresholding + morphological operations)
+* CLAHE (contrast enhancement)
+* Bilateral Filtering (edge-preserving denoising)
+* Raw images (baseline)
 
----
-
-#  Results Summary
-
-|  Exp  | Strategy            | Augmentation |  Accuracy  |    AUC    | Outcome                    |
-| :---: | ------------------- | :----------: | :--------: | :-------: | -------------------------  |
-|   1   | Baseline            |       ❌      |   87.92%   |   0.970   | Weak generalization       |
-|   2   | **Aug Only**        |       ✅      | **92.16%** | **0.992** | Major improvement         |
-|   3   | Skull-Stripping     |       ❌      |   88.77%   |   0.968   | Minor change              |
-|   4   | CLAHE               |       ❌      |   88.98%   |   0.977   | Minor change              |
-|   5   | Denoising           |       ❌      |   88.14%   |   0.973   | No improvement            |
-|   6   | Skull-Strip + Aug   |       ⚠️      |   81.78%   |   0.960   | **Underfitting**          |
-|   7   | CLAHE + Aug         |       ⚠️      |   82.63%   |   0.955   | **Underfitting**          |
-| **8** | **Denoising + Aug** |       ✅     | **94.03%** | **0.991** | 🏆 **Best Configuration** |
+Each configuration was evaluated **with and without data augmentation** under identical conditions.
 
 ---
 
-#  Visuals
+##  Results Summary
 
-All experiment logs, preprocessing examples, Grad-CAM visualizations, and training curves are available in the **Master Notebook** inside the repo.
+| Exp | Strategy          | Augmentation | Accuracy   | AUC       | Outcome             |
+| --- | ----------------- | ------------ | ---------- | --------- | ------------------- |
+| 1   | Baseline          | No           | 87.92%     | 0.970     | Weak generalization |
+| 2   | **Aug Only**      | Yes          | 92.16%     | 0.992     | Major improvement   |
+| 3   | Skull-Stripping   | No           | 88.77%     | 0.968     | Minor change        |
+| 4   | CLAHE             | No           | 88.98%     | 0.977     | Minor change        |
+| 5   | Denoising         | No           | 88.14%     | 0.973     | No improvement      |
+| 6   | Skull-Strip + Aug | Yes          | 81.78%     | 0.960     | Underfitting        |
+| 7   | CLAHE + Aug       | Yes          | 82.63%     | 0.955     | Underfitting        |
+| 8   | **Denoise + Aug** | Yes          | **94.00%** | **0.991** | Highest accuracy    |
+
+> **Statistical note:** McNemar’s test comparing Experiments and did not indicate a statistically significant difference at the 5% level (p = 0.11), highlighting a trade-off between global accuracy and per-sample consistency.
 
 ---
 
-#  Installation
+##  Visualizations
+
+* Training & validation curves
+* Confusion matrices
+* ROC curves
+* Grad-CAM visual explanations
+
+All outputs are available in the **master Jupyter notebook** included in this repository.
+
+---
+
+##  Installation
 
 ```bash
 pip install tensorflow opencv-python-headless scikit-learn pandas seaborn matplotlib tqdm mat73
@@ -108,15 +128,15 @@ pip install tensorflow opencv-python-headless scikit-learn pandas seaborn matplo
 
 ---
 
-#  Acknowledgments
+##  Acknowledgments
 
 Special thanks to:
 
-* **Mr. Himangshu Pal** — Supervision, conceptual guidance, feedback.
+* **Mr. Himangshu Pal** — Supervision, guidance, and feedback
 
 ---
 
-#  Author & Contributions
+##  Authors & Contributions
 
 ### **Latchan Chhetri**
 
@@ -124,13 +144,12 @@ Special thanks to:
 
 **Contributions:**
 
-* Project Conceptualization
-* Methodology & Experimental Design
-* Data Splitting Algorithm
-* Preprocessing Pipeline Implementation
-* Model Training & Ablation Study
-* Visualization, Analysis & Interpretation
-* Writing – Original Draft
+* Conceptualization
+* Methodology & experimental design
+* Patient-level data splitting
+* Preprocessing pipeline
+* Model training & ablation study
+* Analysis, visualization, and writing
 
 ---
 
@@ -140,7 +159,7 @@ Special thanks to:
 
 * Compute resource support
 * Manuscript approval
-* Minor administrative assistance
+* Administrative assistance
 
 ---
 
@@ -149,13 +168,16 @@ Special thanks to:
 **Contributions:**
 
 * Supervision
-* Review & Editing
+* Review & editing
 * Conceptual oversight
 
-##  Full Jupyter Notebook (Link)
-If GitHub cannot render the full notebook due to its size.  
-The complete ablation study notebook (with all outputs, visualizations, and experiment logs) is available on Google Colab:
+---
 
-**Open Notebook on Google Colab**  
-https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing
+##  Full Jupyter Notebook
+
+If GitHub cannot render the full notebook due to its size, the complete ablation study (with logs, plots, and outputs) is available on Google Colab:
+
+🔗 [[https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing](https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing )]
+
+
 
