@@ -19,6 +19,14 @@ A controlled **8-experiment ablation study** was conducted using a fixed **VGG16
 
 ---
 
+##  Full Jupyter Notebook
+
+If GitHub cannot render the full notebook due to its size, the complete ablation study (with logs, plots, and outputs) is available on Google Colab:
+
+Link : [(https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing)](https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing )]
+
+---
+
 ##  Key Findings
 
 1. **Preprocessing alone is insufficient** — accuracy saturates at ~88%.
@@ -172,12 +180,3 @@ Special thanks to:
 * Conceptual oversight
 
 ---
-
-##  Full Jupyter Notebook
-
-If GitHub cannot render the full notebook due to its size, the complete ablation study (with logs, plots, and outputs) is available on Google Colab:
-
-🔗 [[https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing](https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K39?usp=sharing )]
-
-
-
