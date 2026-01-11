@@ -113,7 +113,7 @@ Each configuration was evaluated **with and without data augmentation** under id
 | 7   | CLAHE + Aug       | Yes          | 82.63%     | 0.955     | Underfitting        |
 | 8   | **Denoise + Aug** | Yes          | **94.00%** | **0.991** | Highest accuracy    |
 
-> **Statistical note:** McNemar’s test comparing Experiments and did not indicate a statistically significant difference at the 5% level (p = 0.11), highlighting a trade-off between global accuracy and per-sample consistency.
+> **Statistical note:** McNemar’s test compared the Experiments and did indicated a statistically significant difference p = 0.05
 
 ---
 
@@ -148,7 +148,7 @@ Special thanks to:
 
 ### **Latchan Chhetri**
 
-🔗 LinkedIn: [https://www.linkedin.com/in/latchan-chhetri-704380297/](https://www.linkedin.com/in/latchan-chhetri-704380297/)
+ LinkedIn: [https://www.linkedin.com/in/latchan-chhetri-704380297/](https://www.linkedin.com/in/latchan-chhetri-704380297/)
 
 **Contributions:**
 
