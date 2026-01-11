@@ -24,7 +24,7 @@ We conducted a controlled **8-Experiment Ablation Study** comparing preprocessin
 2. **Destructive preprocessing harms performance** — Skull-stripping & CLAHE + Augmentation caused underfitting (~82%).
 3. **Best Strategy** → **Bilateral Denoising + Augmentation**
 
-   *  **94.03% Accuracy**
+   *  **94.00% Accuracy**
    *  **0.991 AUC**
    * Proves that *cleaning the image before augmentation* yields optimal results.
 
