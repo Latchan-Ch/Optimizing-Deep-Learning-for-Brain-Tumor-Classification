@@ -27,6 +27,10 @@ Link : [(https://colab.research.google.com/drive/1_LDk5Kr7Fo2emU5qR0cuDmMw01Q13K
 
 ---
 
+## Dataset Link : [Brain Tumor Dataset on Figshare](https://figshare.com/articles/dataset/brain_tumor_dataset/1512427)
+
+---
+
 ##  Key Findings
 
 1. **Preprocessing alone is insufficient** — accuracy saturates at ~88%.
